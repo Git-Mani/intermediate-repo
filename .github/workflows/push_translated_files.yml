@@ -1,0 +1,38 @@
+name: Push Translated Files to Big Repo
+
+on:
+  push:
+    paths:
+      - "toTranslate/**"  # Trigger when files in 'toTranslate' change
+    branches:
+      - dev  # Change this to the branch of intermediate-repo you are using
+
+jobs:
+  push-to-big-repo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Intermediate Repo
+        uses: actions/checkout@v3
+
+      - name: Checkout Big Repo
+        uses: actions/checkout@v3
+        with:
+          repository: Git-Mani/big-repo  # ✅ Target repository
+          token: ${{ secrets.GH_PAT }}  # ✅ Use GitHub Secret for authentication
+          path: big-repo
+          ref: main  # Change this if the success folder is in another branch
+
+      - name: Copy Translated Files to Success Folder
+        run: |
+          mkdir -p big-repo/success  # Ensure 'success' folder exists
+          cp -r toTranslate/* big-repo/success/  # Copy translated files
+
+      - name: Commit and Push Changes to Big Repo
+        run: |
+          cd big-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions@github.com"
+          git add .
+          git commit -m "Push translated files from intermediate-repo to success folder"
+          git push origin main  # Change this if using a different branch
