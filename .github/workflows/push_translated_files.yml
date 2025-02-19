@@ -5,7 +5,7 @@ on:
     paths:
       - "toTranslate/**"  # Trigger when files in 'toTranslate' change
     branches:
-      - dev  # Change this to the branch of intermediate-repo you are using
+      - main  # Change this to the branch of intermediate-repo you are using
 
 jobs:
   push-to-big-repo:
